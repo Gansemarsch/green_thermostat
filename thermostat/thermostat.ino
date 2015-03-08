@@ -1,5 +1,6 @@
 #include <OneWire.h>
 #include <Time.h>
+#include <Wire.h>
 
 
 /*
@@ -10,8 +11,8 @@
  #define motionPin 14
  #define motionLED 13
  #define instaHeatSw 8
- #define highSetTemp 69            //lool 69
- #define lowSetTemp 55
+ #define highSetTemp 20//lool 69
+ #define lowSetTemp 13
  #define tempHyst 3 
  #define timeoutSec 1800
  #define heatReqPin 4
@@ -21,9 +22,21 @@
  int presense = FALSE;
  
  void setup(void){
+   Wire.begin(); //Setup I2C bus
    Serial.begin(9600);
  }
  
+ 
+ int readI2CSensor(){
+   Wire.requestFrom(0x48, 1);    // request 6 bytes from slave device #2
+    int c = 0;
+  while(Wire.available())    // slave may send less than requested
+  { 
+    c = (int) Wire.read(); // receive a byte as character
+    Serial.println(c);         // print the character
+  }
+  return c;
+ }
  
  void loop(void){
    cycleStartTime = now();
@@ -37,7 +50,7 @@
    }
    
    // Read temp from sensor here
-   int curTemp = 0;
+   int curTemp = readI2CSensor();
    //Run Heater
    if(presense & heatReqPin){
      if(curTemp < highSetTemp - tempHyst){
