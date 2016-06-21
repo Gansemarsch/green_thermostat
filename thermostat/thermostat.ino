@@ -1,18 +1,20 @@
-#include <OneWire.h>
 #include <Time.h>
 #include <Wire.h>
 
 
 /*
- * THis Sketch contains a motion sensitive thermostat.
+ * This Sketch contains a motion sensitive thermostat. The goal is to save costs by only running the heat when people are in the shop.
  */
+ //Pin Layouts
  #define relayPin 2
  #define relayLED 3
  #define motionPin 14
  #define motionLED 13
  #define instaHeatSw 8
- #define highSetTemp 20//lool 69
- #define lowSetTemp 13
+ 
+ //Thermostat constants
+ #define highSetTemp 20           //69F
+ #define lowSetTemp 13            //55F
  #define tempHyst 3 
  #define timeoutSec 1800
  #define heatReqPin 4
@@ -24,6 +26,11 @@
  void setup(void){
    Wire.begin(); //Setup I2C bus
    Serial.begin(9600);
+   
+ // Set the initial states  
+ lastMotionTime = 0;
+ cycleStartTime = 0;
+ presense = FALSE;
  }
  
  
